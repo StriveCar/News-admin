@@ -3,7 +3,7 @@ module.exports = {
   tabWidth: 2, // 缩进长度
   useTabs: false, // 使用空格代替tab缩进
   semi: false, // 句末使用分号
-  trailingComma: none,
+  trailingComma: 'none',
   singleQuote: true, // 使用单引号
   quoteProps: 'as-needed', // 仅在必需时为对象的key添加引号
   jsxSingleQuote: true, // jsx中使用单引号

@@ -5,11 +5,19 @@ import { ElMessage } from 'element-plus'
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: 'login',
+    hidden: true
   },
   {
     path: '/login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/login')
+    // component: () => import(/* webpackChunkName: "about" */ '../views/login'),
+    component: () => import(/* webpackChunkName: "about" */ '@/App'),
+    hidden: true
+  },
+  {
+    path: '/:catchAll(.*)',
+    component: ()=> import('../views/404'),
+    hidden: true
   }
 ]
 
@@ -18,16 +26,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.path === '/login') return next()
-  const userStore = useUserStore()
-  const userInfo = userStore.userInfo
-  console.log(userInfo);
-  if (Object.prototype.isPrototypeOf(userInfo)) {
-    ElMessage.error('未登录,不允许跳转')
-    return next('/login')
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.path === '/login') return next()
+//   const userStore = useUserStore()
+//   const userInfo = userStore.userInfo
+//   console.log(userInfo);
+//   if (Object.prototype.isPrototypeOf(userInfo)) {
+//     ElMessage.error('未登录,不允许跳转')
+//     return next('/login')
+//   }
+//   next()
+// })
 
 export default router
