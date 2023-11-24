@@ -69,11 +69,11 @@ const handleCurrentChange = (val) => {
 </script>
 
 <template>
-  <div :class="{ hidden: hidden }" class="pagination-container">
+  <div :class="{ 'hidden': hidden }" class="pagination-container">
     <el-pagination
       :background="props.background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
+      :current-page="currentPage"
+      :page-size="pageSize"
       :layout="props.layout"
       :page-sizes="props.pageSizes"
       :total="props.total"
