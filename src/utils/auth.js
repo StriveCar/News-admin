@@ -1,6 +1,8 @@
-import Cookies from 'js-cookie'
+import { useCookies } from 'vue3-cookie'
 
 const TokenKey = 'token'
+
+const { Cookies } = useCookies()
 
 export function getToken() {
   return Cookies.get(TokenKey)

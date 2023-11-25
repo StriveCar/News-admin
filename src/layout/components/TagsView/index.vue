@@ -3,10 +3,10 @@ import ScrollPane from './ScrollPane.vue'
 import path from 'path'
 import { constantRoutes } from '@/router'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useTagsViewStore } from '@/store/tagsView'
 import { ref } from 'vue'
 
-const store = useStore()
+const tagsViewStore = useTagsViewStore()
 const route = useRoute()
 const router = useRouter()
 const visible = ref(false)
@@ -18,7 +18,7 @@ const tags = ref(null)
 const scrollPane = ref(null)
 
 const visitedViews = computed(() => {
-  return store.state.tagsView.visitedViews
+  return tagsViewStore.visitedViews
 })
 
 watch(route, () => {
@@ -73,7 +73,7 @@ const initTags = () => {
   const affixTag = filterAffixTags(constantRoutes)
   for (const tag of affixTag) {
     if (tag.name) {
-      store.dispatch('tagsView/addVisitedView', tag)
+      tagsViewStore.addVisitedView(tag)
     }
   }
   affixTags.value = affixTag
@@ -82,7 +82,7 @@ const initTags = () => {
 const addTags = () => {
   const { name } = route
   if (name) {
-    store.dispatch('tagsView/addView', route)
+    tagsViewStore.addView(route)
   }
 }
 
@@ -92,7 +92,7 @@ const moveToCurrentTag = () => {
       if (tag.to.path === route.path) {
         scrollPane.moveToTarget(tag)
         if (tag.to.fullPath !== route.fullPath) {
-          store.dispatch('tagsView/updateVisitedView', route)
+          tagsViewStore.updateVisitedView(route)
         }
         break
       }
@@ -101,7 +101,7 @@ const moveToCurrentTag = () => {
 }
 
 const refreshSelectedTag = (view) => {
-  store.dispatch('tagsView/delCachedView', view).then(() => {
+  tagsViewStore.delCachedView(view).then(() => {
     const { fullPath } = view
     nextTick(() => {
       router.replace({
@@ -112,7 +112,7 @@ const refreshSelectedTag = (view) => {
 }
 
 const closeSelectedTag = (view) => {
-  store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
+  tagsViewStore.delView(view).then(({ visitedViews }) => {
     if (isActive(view)) {
       toLastView(visitedViews, view)
     }
@@ -121,13 +121,13 @@ const closeSelectedTag = (view) => {
 
 const closeOthersTags = () => {
   router.push(selectedTag.value)
-  store.dispatch('tagsView/delOthersViews', selectedTag.value).then(() => {
+  tagsViewStore.delOthersViews(selectedTag.value).then(() => {
     moveToCurrentTag()
   })
 }
 
 const closeAllTags = (view) => {
-  store.dispatch('tagsView/delAllViews').then(({ visitedViews }) => {
+  tagsViewStore.delAllViews.then(({ visitedViews }) => {
     if (affixTags.some((tag) => tag.path === view.path)) {
       return
     }

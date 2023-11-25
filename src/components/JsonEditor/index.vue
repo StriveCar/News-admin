@@ -25,7 +25,7 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/selection/active-line'
 // 括号、引号编辑和删除时成对出现
 import 'codemirror/addon/edit/closebrackets'
-let jsonEditor = reactive(null)
+let jsonEditor = reactive(false)
 const emit = defineEmits(['changed', 'input'])
 const textarea = ref(null)
 const props = defineProps({

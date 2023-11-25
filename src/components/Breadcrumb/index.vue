@@ -1,10 +1,11 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import pathToRegexp from 'path-to-regexp'
+import { useRouter,useRoute } from 'vue-router'
+import { pathToRegexp } from 'path-to-regexp'
 
 const levelList = ref({})
-const route = useRouter()
+const router = useRouter()
+const route = useRoute()
 
 const getBreadcrumb = () => {
   let matched = route.matched.filter((item) => item.meta && item.meta.title)
@@ -36,10 +37,10 @@ const pathCompile = (path) => {
 const handleLink = (item) => {
   const { redirect, path } = item
   if (redirect) {
-    route.push(redirect)
+    router.push(redirect)
     return
   }
-  route.push(pathCompile(path))
+  router.push(pathCompile(path))
 }
 
 watch(route, () => {

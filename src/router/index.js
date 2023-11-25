@@ -11,12 +11,16 @@ const routes = [
   {
     path: '/login',
     // component: () => import(/* webpackChunkName: "about" */ '../views/login'),
-    component: () => import(/* webpackChunkName: "about" */ '@/App'),
+    component: ()=> import('@/layout'),
     hidden: true
   },
+  // {
+  //   path: '/',
+  //   component: ()=> import('@/layout'),
+  // },
   {
     path: '/:catchAll(.*)',
-    component: ()=> import('../views/404'),
+    component: () => import('../views/404'),
     hidden: true
   }
 ]

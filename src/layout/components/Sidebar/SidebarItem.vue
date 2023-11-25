@@ -2,8 +2,8 @@
 import path from 'path'
 import { isExternal } from '@/utils/validate'
 import { defineProps, ref } from 'vue'
-import Item from './Item'
-import AppLink from './Link'
+import Item from './Item.vue'
+import AppLink from './Link.vue'
 import { device, fixBugIniOS } from './FixiOSBug'
 
 // 定义组件的属性

@@ -13,7 +13,7 @@ const props = defineProps({
   }
 })
 
-const isExternal = computed(() => {
+const IsExternal = computed(() => {
   return isExternal(props.iconClass)
 })
 
@@ -39,7 +39,7 @@ const styleExternalIcon = computed(() => {
 
 <template>
   <div
-    v-if="isExternal"
+    v-if="IsExternal"
     :style="styleExternalIcon"
     class="svg-external-icon svg-icon"
     v-bind="$attrs"

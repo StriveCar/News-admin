@@ -1,5 +1,6 @@
 <script setup>
-import { emit } from 'vue'
+import { defineEmits } from 'vue'
+const emit = defineEmits(['toggleClick'])
 const props = defineProps({
   isActive: {
     type: Boolean,

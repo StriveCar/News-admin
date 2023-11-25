@@ -1,11 +1,6 @@
 <template>
   <el-config-provider :locale="locale">
-    <JsonEditor
-      :total="10"
-      :page="page"
-      :limit="limit"
-      @pagination="getRoomList"
-    />
+    <router-view />
   </el-config-provider>
 </template>
 
@@ -13,13 +8,7 @@
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 const locale = zhCn
 
-import JsonEditor from '@/components/Pagination'
-import { ref } from 'vue'
-const page = ref(1)
-const limit = ref(10)
-const getRoomList = () => {
-  console.log('111')
-}
+
 </script>
 
 <style>

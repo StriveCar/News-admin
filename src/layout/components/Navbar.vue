@@ -2,16 +2,14 @@
 import { computed } from 'vue'
 import { mapGetters, useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import Breadcrumb from '@/components/Breadcrumb.vue'
-import Hamburger from '@/components/Hamburger.vue'
+import Breadcrumb from '@/components/Breadcrumb'
+import Hamburger from '@/components/Hamburger'
 import { useConfirm } from 'element-plus'
-import config from '@/common/sys-config'
 
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
 
-const config = config
 
 const userInfo = computed(() => store.getters.userInfo)
 const sidebar = computed(() => store.getters.sidebar)
@@ -53,7 +51,7 @@ const logout = () => {
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!--          <span v-if="userInfo" style="font-size: 13px;">{{userInfo.nickname}}</span>-->
-          <img :src="config.avatar" class="user-avatar" />
+          <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">

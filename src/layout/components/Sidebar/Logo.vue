@@ -1,8 +1,8 @@
 <script setup>
-import { useStore } from 'vuex'
+import { useUserStore } from '@/store/userStore'
 import { defineProps, ref } from 'vue'
 
-const { state } = useStore()
+const userStore = useUserStore()
 const props = defineProps({
   collapse: {
     type: Boolean,
@@ -11,7 +11,7 @@ const props = defineProps({
 })
 const logo = ref('@/assets/news.png')
 const userInfo = computed(() => {
-  state.user.userInfo
+  userStore.userInfo
 })
 </script>
 

@@ -1,20 +1,22 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/store/settings'
+import { useAppStore } from '@/store/app'
 import Logo from './Logo.vue'
 import SidebarItem from './SidebarItem.vue'
 import variables from '@/styles/variables.scss'
 
-const store = useStore()
+const settingsStore = useSettingsStore()
+const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
-const showLogo = computed(() => store.state.settings.sidebarLogo)
-const sidebar = computed(() => store.getters.sidebar)
+const showLogo = computed(() => settingsStore.state.sidebarLogo)
+const sidebar = computed(() => appStore.sidebar)
 const routes = computed(() => router.options.routes)
 
 const activeMenu = computed(() => {
-  const { meta, path } = route.value
+  const { meta, path } = route
   if (meta.activeMenu) {
     return meta.activeMenu
   }
@@ -23,7 +25,6 @@ const activeMenu = computed(() => {
 
 const isCollapse = computed(() => !sidebar.value.opened)
 
-const variables = variables
 </script>
 
 <template>

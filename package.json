@@ -13,8 +13,10 @@
     "axios": "^1.5.1",
     "codemirror": "^5.45.0",
     "core-js": "^3.8.3",
+    "driver.js": "^0.9.8",
     "element-plus": "^1.0.2-beta.28",
     "jsonlint": "^1.6.3",
+    "path-browserify": "^1.0.1",
     "path-to-regexp": "^6.2.1",
     "pinia": "^2.1.4",
     "pinia-plugin-persistedstate": "^3.2.0",
@@ -23,6 +25,7 @@
     "script-loader": "^0.7.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
+    "vue3-cookies": "^1.0.6",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

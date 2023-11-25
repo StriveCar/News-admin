@@ -4,6 +4,7 @@ import { addClass, removeClass } from '@/utils'
 
 const show = ref(false)
 const tip = ref('点击查看帮助与设置')
+const rightPanel=ref(null)
 const props = defineProps({
   clickNotClose: {
     default: false,
@@ -26,25 +27,25 @@ watch(show, (newValue) => {
 })
 
 const closePanel = () => {
-  this.show = false
-  this.tip = '点击查看帮助与设置'
+  show.value = false
+  tip.value = '点击查看帮助与设置'
 }
 const openPanel = () => {
-  this.show = true
-  this.tip = '关闭'
+  show.value = true
+  tip.value = '关闭'
 }
 const addEventClick = () => {
-  window.addEventListener('click', this.closeSidebar)
+  window.addEventListener('click', closeSidebar)
 }
 const closeSidebar = (evt) => {
   const parent = evt.target.closest('.rightPanel')
   if (!parent) {
-    this.show = false
-    window.removeEventListener('click', this.closeSidebar)
+    show.value = false
+    window.removeEventListener('click', closeSidebar)
   }
 }
 const insertToBody = () => {
-  const elx = this.$refs.rightPanel
+  const elx = rightPanel.value
   const body = document.querySelector('body')
   body.insertBefore(elx, body.firstChild)
 }

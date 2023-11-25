@@ -1,21 +1,23 @@
 <script setup>
-import { computed ,defineEmits} from 'vue'
-import { mapState, useDispatch, useStore  } from 'vuex'
+import { computed, defineEmits } from 'vue'
+import { useSettingsStore } from '@/store/settings'
+import { useUserStore } from '@/store/user'
 
-const { state } = useStore()
+const settingsStore = useSettingsStore()
+const userStore = useUserStore()
 
 const emit = defineEmits(['handleShowHelpClick'])
 const fixedHeader = computed({
   get: () => state.settings.fixedHeader,
   set: (val) => {
-    useDispatch('settings/changeSetting', {
+    settingsStore.changeSetting({
       key: 'fixedHeader',
       value: val
     })
   }
 })
 
-const roles = computed(() => state.user.roles)
+const roles = computed(() => userStore.state.roles)
 
 const isSuperAdmin = computed(() => {
   return roles.value.some((v) => v === 'super-admin')
@@ -24,7 +26,7 @@ const isSuperAdmin = computed(() => {
 const tagsView = computed({
   get: () => state.settings.tagsView,
   set: (val) => {
-    useDispatch('settings/changeSetting', {
+    settingsStore.changeSetting({
       key: 'tagsView',
       value: val
     })
@@ -34,7 +36,7 @@ const tagsView = computed({
 const sidebarLogo = computed({
   get: () => state.settings.sidebarLogo,
   set: (val) => {
-    useDispatch('settings/changeSetting', {
+    settingsStore.changeSetting({
       key: 'sidebarLogo',
       value: val
     })
