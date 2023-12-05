@@ -1,11 +1,13 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed,getCurrentInstance } from 'vue'
 
 const tagAndTagSpacing = 4
-
+const scrollContainer = ref(null)
+const parentInstance = getCurrentInstance().parent
+const emit = defineEmits(['scroll'])
 const handleScroll = (e) => {
   const eventDelta = e.wheelDelta || -e.deltaY * 40
-  const scrollWrapper = scrollWrapperRef.value
+  const scrollWrapper = scrollContainer.value.$el.querySelector('.el-scrollbar__wrap')
   scrollWrapper.scrollLeft = scrollWrapper.scrollLeft + eventDelta / 4
 }
 
@@ -14,9 +16,9 @@ const emitScroll = () => {
 }
 
 const moveToTarget = (currentTag) => {
-  const container = scrollContainerRef.value.$el
+  const container = scrollContainer.value.$el
   const containerWidth = container.offsetWidth
-  const scrollWrapper = scrollWrapperRef.value
+  const scrollWrapper = scrollContainer.value.$el.querySelector('.el-scrollbar__wrap')
   const tagList = parentInstance.refs.tag
 
   let firstTag = null
@@ -53,17 +55,15 @@ const moveToTarget = (currentTag) => {
   }
 }
 
-const scrollContainerRef = ref(null)
-const scrollWrapperRef = computed(() => scrollContainerRef.value?.$refs.wrap)
-const parentInstance = getCurrentInstance().parent
-const { emit } = getContext()
 
 onMounted(() => {
-  scrollWrapperRef.value.addEventListener('scroll', emitScroll, true)
+  const scrollWrapper = scrollContainer.value.$el.querySelector('.el-scrollbar__wrap')
+  scrollWrapper.addEventListener('scroll', emitScroll, true)
 })
 
 onBeforeUnmount(() => {
-  scrollWrapperRef.value.removeEventListener('scroll', emitScroll)
+  const scrollWrapper = scrollContainer.value.$el.querySelector('.el-scrollbar__wrap')
+  scrollWrapper.removeEventListener('scroll', emitScroll)
 })
 </script>
 

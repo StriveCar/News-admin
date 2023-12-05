@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { getToken, setToken, removeToken, getUserInfo, removeUserInfo, setUserInfo, removeRoles, setRoles, getRoles } from '@/utils/auth'
 import { useRouter } from 'vue-router'
-import { Message } from 'element-ui'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
@@ -64,14 +64,14 @@ export const useUserStore = defineStore('user', () => {
         setUserInfo(data.user)
         setRoles(data.roles)
       } else {
-        Message({
+        ElMessage({
           message: '账号或密码错误',
           type: 'error',
           duration: 2500
         })
       }
     } catch (error) {
-      Message({
+      ElMessage({
         message: error,
         type: 'error',
       })

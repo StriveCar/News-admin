@@ -4,8 +4,6 @@ import {
   toRef,
   ref,
   watch,
-  defineProps,
-  defineEmits,
   reactive
 } from 'vue'
 import CodeMirror from 'codemirror'

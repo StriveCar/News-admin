@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { addClass, removeClass } from '@/utils'
 
 const show = ref(false)

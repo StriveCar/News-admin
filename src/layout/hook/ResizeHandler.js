@@ -1,12 +1,12 @@
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useAppStore } from '@/store/app'
 import { useRoute } from 'vue-router'
 const { body } = document
 const WIDTH = 992
 
-export default function (device) {
+export default function () {
     const isMobile = ref(false)
-    const store = useStore()
+    const appStore = useAppStore()
     const route = useRoute()
 
     const isMobileDevice = () => {
@@ -17,9 +17,9 @@ export default function (device) {
     const resizeHandler = () => {
         if (!document.hidden) {
             isMobile.value = isMobileDevice()
-
+            appStore.toggleDevice(isMobile ? 'mobile' : 'desktop')
             if (isMobile.value) {
-                closeSideBar()
+                appStore.closeSidebar({ withoutAnimation: true })
             }
         }
     }
@@ -34,16 +34,15 @@ export default function (device) {
 
     onMounted(() => {
         isMobile.value = isMobileDevice()
-
         if (isMobile.value) {
-            store.dispatch('app/toggleDevice', 'mobile')
-            store.dispatch('app/closeSideBar', { withoutAnimation: true })
+            appStore.toggleDevice('mobile')
+            appStore.closeSidebar({ withoutAnimation: true })
         }
     })
 
     watch(route, () => {
-        if (device && this.sidebar.opened) {
-            store.dispatch('app/closeSideBar', { withoutAnimation: false })
+        if (appStore.device === 'mobile' && sidebar.opened) {
+            appStore.closeSidebar({ withoutAnimation: false })
         }
     })
 }

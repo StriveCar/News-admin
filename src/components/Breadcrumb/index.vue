@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 import { pathToRegexp } from 'path-to-regexp'
 
-const levelList = ref({})
+let levelList = ref({})
 const router = useRouter()
 const route = useRoute()
 

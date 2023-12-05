@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, reactive } from 'vue'
-import { useStore } from 'vuex'
+import { useAppStore } from '@/store/app'
+import { useSettingsStore } from '@/store/settings'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
@@ -20,19 +21,19 @@ import roomListStepsAdmin from '@/layout/steps/room-list-steps-admin'
 import roomListStepsSuperAdmin from '@/layout/steps/room-list-steps-super-admin'
 import configListSteps from '@/layout/steps/config-list-steps'
 
-const store = useStore()
-const state = store.state
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
 const route = useRoute()
 const router = useRouter()
 
 const rightPanel = ref(null)
 
-const sidebar = computed(() => state.app.sidebar)
-const device = computed(() => state.app.device)
-ResizeHook(device)
-const showSettings = computed(() => state.settings.showSettings)
-const needTagsView = computed(() => state.settings.tagsView)
-const fixedHeader = computed(() => state.settings.fixedHeader)
+const sidebar = computed(() => appStore.sidebar)
+const device = computed(() => appStore.device)
+ResizeHook()
+const showSettings = computed(() => settingsStore.state.showSettings)
+const needTagsView = computed(() => settingsStore.state.tagsView)
+const fixedHeader = computed(() => settingsStore.state.fixedHeader)
 const classObj = computed(() => {
   return {
     hideSidebar: !sidebar.opened,
@@ -41,11 +42,9 @@ const classObj = computed(() => {
     mobile: device === 'mobile'
   }
 })
-const isSuperAdmin = computed(() =>
-  store.getters.roles.some((v) => v === 'super-admin')
-)
+const isSuperAdmin = ref(true)
 
-let driver = reactive(null)
+let driver = reactive({})
 
 onMounted(() => {
   driver = new Driver({
@@ -57,7 +56,7 @@ onMounted(() => {
 })
 
 const handleClickOutside = () => {
-  store.dispatch('app/closeSideBar', { withoutAnimation: false })
+  appStore.closeSidebar({ withoutAnimation: false })
 }
 
 const handleShowHelpClick = (toPath) => {
@@ -82,7 +81,7 @@ const handleShowHelpClick = (toPath) => {
         break
       case '/room/list':
         setTimeout(() => {
-          if (isSuperAdmin) {
+          if (isSuperAdmin.value) {
             driver.defineSteps(roomListStepsSuperAdmin)
           } else {
             driver.defineSteps(roomListStepsAdmin)

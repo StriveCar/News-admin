@@ -8,6 +8,9 @@ import 'dayjs/locale/zh-cn'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import 'element-plus/lib/theme-chalk/index.css'
+import '@/styles/index.scss'
+import '@/styles/element-ui.scss'
+import 'normalize.css/normalize.css'
 
 import VueCookies from 'vue3-cookies'
 

@@ -30,41 +30,59 @@ export const useTagsViewStore = defineStore('tagsview', () => {
   }
 
   function delVisitedView(view) {
-    const index = visitedViews.findIndex(v => v.path === view.path)
-    if (index > -1) {
-      visitedViews.splice(index, 1)
-    }
+    return new Promise(resolve => {
+      const index = visitedViews.findIndex(v => v.path === view.path)
+      if (index > -1) {
+        visitedViews.splice(index, 1)
+      }
+      resolve([...visitedViews])
+    })
   }
 
   function delCachedView(view) {
-    const index = cachedViews.indexOf(view.name)
-    if (index > -1) {
-      cachedViews.splice(index, 1)
-    }
+    return new Promise(resolve => {
+      const index = cachedViews.indexOf(view.name)
+      if (index > -1) {
+        cachedViews.splice(index, 1)
+      }
+      resolve([...cachedViews])
+    })
   }
 
   function delOthersVisitedViews(view) {
-    visitedViews = visitedViews.filter(v => {
-      return v.meta.affix || v.path === view.path
+    return new Promise(resolve => {
+      visitedViews = visitedViews.filter(v => {
+        return v.meta.affix || v.path === view.path
+      })
+      resolve([...visitedViews])
     })
   }
 
   function delOthersCachedViews(view) {
-    const index = cachedViews.indexOf(view.name)
-    if (index > -1) {
-      cachedViews = cachedViews.slice(index, index + 1)
-    } else {
-      cachedViews = reactive([])
-    }
+    return new Promise(resolve => {
+      const index = cachedViews.indexOf(view.name)
+      if (index > -1) {
+        cachedViews = cachedViews.slice(index, index + 1)
+      } else {
+        cachedViews = reactive([])
+      }
+      resolve([...cachedViews])
+    })
   }
 
   function delAllVisitedViews() {
-    const affixTags = visitedViews.filter(tag => tag.meta.affix)
-    visitedViews = affixTags
+    return new Promise(resolve => {
+      const affixTags = visitedViews.filter(tag => tag.meta.affix)
+      visitedViews = affixTags
+      resolve([...visitedViews])
+    })
   }
 
   function delAllCachedViews() {
-    cachedViews = reactive([])
+    return new Promise(resolve => {
+      cachedViews = reactive([])
+      resolve([...cachedViews])
+    })
   }
 
   function updateVisitedView(view) {
@@ -80,20 +98,38 @@ export const useTagsViewStore = defineStore('tagsview', () => {
   }
 
   function delView(view) {
-    delVisitedView(view)
-    delCachedView(view)
+    return new Promise(resolve => {
+      delVisitedView(view)
+      delCachedView(view)
+      resolve({
+        visitedView: [...visitedViews],
+        cachedView: [...cachedViews]
+      })
+    })
   }
 
   function delOthersViews(view) {
-    delOthersVisitedViews(view)
-    delOthersCachedViews(view)
+    return new Promise(resolve => {
+      delOthersVisitedViews(view)
+      delOthersCachedViews(view)
+      resolve({
+        visitedView: [...visitedViews],
+        cachedView: [...cachedViews]
+      })
+    })
   }
 
   function delAllViews(view) {
-    delAllVisitedViews(view)
-    delAllCachedViews(view)
+    return new Promise(resolve => {
+      delAllVisitedViews(view)
+      delAllCachedViews(view)
+      resolve({
+        visitedView: [...visitedViews],
+        cachedView: [...cachedViews]
+      })
+    })
   }
-  
+
   return {
     visitedViews,
     cachedViews,

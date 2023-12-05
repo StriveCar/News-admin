@@ -1,11 +1,13 @@
 <script setup>
 import path from 'path'
 import { isExternal } from '@/utils/validate'
-import { defineProps, ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import Item from './Item.vue'
 import AppLink from './Link.vue'
-import { device, fixBugIniOS } from './FixiOSBug'
+import FixBugIniOS from './FixiOSBug'
 
+const subMenu = ref(null)
+const { device, fixBugIniOS } = FixBugIniOS(subMenu.value);
 // 定义组件的属性
 const props = defineProps({
   // route object
@@ -39,7 +41,7 @@ const hasOneShowingChild = (children = [], parent) => {
     if (item.hidden) {
       return false
     } else {
-      // Temp set(will be used if only has one showing child)
+      // console.log(!item.hidden);
       onlyOneChild.value = item
       return true
     }

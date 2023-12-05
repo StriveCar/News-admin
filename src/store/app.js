@@ -1,14 +1,16 @@
 import { defineStore } from 'pinia'
-import { useCookies } from 'vue3-cookie'
+import { useCookies } from 'vue3-cookies'
 import { ref, reactive } from 'vue'
 
 export const useAppStore = defineStore('app', () => {
-  const { get, set } = useCookies()
+  const { cookies } = useCookies()
 
   const sidebar = reactive({
-    opened: get('sidebarStatus') ? !!+get('sidebarStatus') : true,
+    // opened: cookies.get('sidebarStatus') ? !!+cookies.get('sidebarStatus') : true,
+    opened: true,
     withoutAnimation: false,
   })
+
   const device = ref('desktop')
 
 
@@ -16,9 +18,9 @@ export const useAppStore = defineStore('app', () => {
     sidebar.opened = !sidebar.opened
     sidebar.withoutAnimation = false
     if (sidebar.opened) {
-      set('sidebarStatus', 1)
+      cookies.set('sidebarStatus', 1)
     } else {
-      set('sidebarStatus', 0)
+      cookies.set('sidebarStatus', 0)
     }
   }
 

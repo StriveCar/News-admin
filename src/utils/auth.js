@@ -1,19 +1,19 @@
-import { useCookies } from 'vue3-cookie'
+import { useCookies } from 'vue3-cookies'
 
 const TokenKey = 'token'
 
-const { Cookies } = useCookies()
+const { cookies } = useCookies()
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return cookies.get(TokenKey)
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token, { expires: 7 })
+  return cookies.set(TokenKey, token, { expires: 7 })
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return cookies.remove(TokenKey)
 }
 
 export function setUserInfo(user) {
@@ -21,19 +21,19 @@ export function setUserInfo(user) {
   if (user) {
     userInfo = JSON.stringify(user)
   }
-  return Cookies.set('userInfo', userInfo, { expires: 7 })
+  return cookies.set('userInfo', userInfo, { expires: 7 })
 }
 
 export function getUserInfo() {
-  let userInfoText = Cookies.get('userInfo')
+  let userInfoText = cookies.get('userInfo')
   if (userInfoText) {
-    return JSON.parse(userInfoText)
+    return userInfoText;
   }
   return '';
 }
 
 export function removeUserInfo() {
-  return Cookies.remove('userInfo')
+  return cookies.remove('userInfo')
 }
 
 export function setRoles(roles) {
@@ -41,11 +41,11 @@ export function setRoles(roles) {
   if (roles) {
     userRoles = JSON.stringify(roles)
   }
-  Cookies.set("roles", userRoles, { expires: 7 })
+  cookies.set("roles", userRoles, { expires: 7 })
 }
 
 export function getRoles() {
-  let userRoles = Cookies.get("roles")
+  let userRoles = cookies.get("roles")
   if (userRoles) {
     return JSON.parse(userRoles)
   }
@@ -53,5 +53,5 @@ export function getRoles() {
 }
 
 export function removeRoles() {
-  Cookies.remove("roles")
+  cookies.remove("roles")
 }

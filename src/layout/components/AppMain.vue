@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { useTagsViewStore } from '@/store/tagsView'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const store = useStore()
+const tagsView = useTagsViewStore()
 
-const cachedViews = computed(() => store.state.tagsView.cachedViews)
+const cachedViews = computed(() => tagsView.cachedViews)
 
 const key = computed(() => route.path)
 </script>

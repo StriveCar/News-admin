@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSettingsStore } from '@/store/settings'
 import { useAppStore } from '@/store/app'
@@ -12,9 +12,7 @@ const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const showLogo = computed(() => settingsStore.state.sidebarLogo)
-const sidebar = computed(() => appStore.sidebar)
 const routes = computed(() => router.options.routes)
-
 const activeMenu = computed(() => {
   const { meta, path } = route
   if (meta.activeMenu) {
@@ -23,8 +21,7 @@ const activeMenu = computed(() => {
   return path
 })
 
-const isCollapse = computed(() => !sidebar.value.opened)
-
+const isCollapse = computed({ get: () => !appStore.sidebar.opened })
 </script>
 
 <template>

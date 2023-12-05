@@ -1,9 +1,9 @@
 import { onMounted, computed, ref } from "vue"
-import { useStore } from 'vuex'
+import { useAppStore } from '@/store/app'
 export default function (subMenu) {
-    const { state } = useStore()
+    const appStore = useAppStore()
     const device = computed(() => {
-        return state.app.device
+        return appStore.device
     })
     const fixBugIniOS = () => {
         const $subMenu = subMenu

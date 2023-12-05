@@ -1,8 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { useUserStore } from '@/store/userStore'
+import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
+import Layout from '@/layout'
 
-const routes = [
+export const constantRoutes = [
   {
     path: '/',
     redirect: 'login',
@@ -11,13 +12,24 @@ const routes = [
   {
     path: '/login',
     // component: () => import(/* webpackChunkName: "about" */ '../views/login'),
-    component: ()=> import('@/layout'),
+    component: () => import('@/layout'),
     hidden: true
   },
-  // {
-  //   path: '/',
-  //   component: ()=> import('@/layout'),
-  // },
+  {
+    path: '/news',
+    component: Layout,
+    name: 'News',
+    redirect: '/news/index',
+    meta: { title: '新闻管理', icon: 'table' },
+    children: [
+      {
+        path: 'index',
+        name: 'NewsManager',
+        component: () => import('@/views/news/index'),
+        meta: { title: '新闻管理', icon: 'notice', noCache: true }
+      }
+    ]
+  },
   {
     path: '/:catchAll(.*)',
     component: () => import('../views/404'),
@@ -27,7 +39,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes: constantRoutes
 })
 
 // router.beforeEach((to, from, next) => {

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineEmits } from 'vue'
+import { computed } from 'vue'
 import { useSettingsStore } from '@/store/settings'
 import { useUserStore } from '@/store/user'
 
@@ -8,7 +8,7 @@ const userStore = useUserStore()
 
 const emit = defineEmits(['handleShowHelpClick'])
 const fixedHeader = computed({
-  get: () => state.settings.fixedHeader,
+  get: () => settingsStore.state.fixedHeader,
   set: (val) => {
     settingsStore.changeSetting({
       key: 'fixedHeader',
@@ -24,7 +24,7 @@ const isSuperAdmin = computed(() => {
 })
 
 const tagsView = computed({
-  get: () => state.settings.tagsView,
+  get: () => settingsStore.state.tagsView,
   set: (val) => {
     settingsStore.changeSetting({
       key: 'tagsView',
@@ -34,7 +34,7 @@ const tagsView = computed({
 })
 
 const sidebarLogo = computed({
-  get: () => state.settings.sidebarLogo,
+  get: () => settingsStore.state.sidebarLogo,
   set: (val) => {
     settingsStore.changeSetting({
       key: 'sidebarLogo',

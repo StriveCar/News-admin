@@ -1,33 +1,40 @@
-<script setup>
-import { h, defineProps } from 'vue'
+<script>
+import { h } from 'vue'
 
-const props = defineProps({
-  icon: {
-    type: String,
-    default: ''
-  },
-  title: {
-    type: String,
-    default: ''
-  }
-})
-
-const render = () => {
-  const vnodes = []
-  if (props.icon) {
-    if (props.icon.includes('el-icon')) {
-      vnodes.push(h('i', { class: [props.icon, 'sub-el-icon'] }))
-    } else {
-      vnodes.push(h('svg-icon', { 'icon-class': props.icon }))
+export default {
+  props: {
+    icon: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
     }
-  }
+  },
+  render() {
+    const vnodes = []
+    if (this.icon) {
+      if (this.icon.includes('el-icon')) {
+        vnodes.push(h('i', { class: [this.icon, 'sub-el-icon'] }))
+      } else {
+        vnodes.push(h('svg-icon', { 'icon-class': this.icon }))
+      }
+    }
 
-  if (props.title) {
-    vnodes.push(h('span', { slot: 'title' }, props.title))
-  }
+    if (this.title) {
+      vnodes.push(h('span', { slot: 'title' }, this.title))
+    }
 
-  return vnodes
+    return h('div', null, vnodes)
+  }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.sub-el-icon {
+  color: currentColor;
+  width: 1em;
+  height: 1em;
+}
+</style>
