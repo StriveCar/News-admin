@@ -9,13 +9,13 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 const tagsViewStore = useTagsViewStore()
 const route = useRoute()
 const router = useRouter()
-const visible = ref(false)
-const top = ref(0)
-const left = ref(0)
+let visible = ref(false)
+let top = ref(0)
+let left = ref(0)
 const selectedTag = ref({})
 const affixTags = ref([])
-const tags = ref(null)
-const scrollPane = ref(null)
+const tag = ref(null)
+let scrollPane = ref(null)
 
 const visitedViews = computed({
   get: () => {
@@ -73,7 +73,7 @@ const filterAffixTags = (routes, basePath = '/') => {
 
 const initTags = () => {
   const affixTag = filterAffixTags(constantRoutes)
-  for (const tag of affixTag) {
+  for (let tag of affixTag) {
     if (tag.name) {
       tagsViewStore.addVisitedView(tag)
     }
@@ -89,10 +89,11 @@ const addTags = () => {
 }
 
 const moveToCurrentTag = () => {
+  const tags = tag.value
   nextTick(() => {
     for (const tag of tags) {
       if (tag.to.path === route.path) {
-        scrollPane.moveToTarget(tag)
+        scrollPane.value.moveToTarget(tag)
         if (tag.to.fullPath !== route.fullPath) {
           tagsViewStore.updateVisitedView(route)
         }
@@ -114,9 +115,9 @@ const refreshSelectedTag = (view) => {
 }
 
 const closeSelectedTag = (view) => {
-  tagsViewStore.delView(view).then(({ visitedView }) => {
+  tagsViewStore.delView(view).then(({ visitedViews }) => {
     if (isActive(view)) {
-      toLastView(visitedView, view)
+      toLastView(visitedViews, view)
     }
   })
 }
@@ -129,11 +130,12 @@ const closeOthersTags = () => {
 }
 
 const closeAllTags = (view) => {
-  tagsViewStore.delAllViews.then(({ visitedView }) => {
-    if (affixTags.some((tag) => tag.path === view.path)) {
+  tagsViewStore.delAllViews(view).then(({ visitedViews }) => {
+    if (affixTags.value.some((tag) => tag.path === view.path)) {
       return
     }
-    toLastView(visitedView, view)
+    console.log(visitedViews);
+    toLastView(visitedViews, view)
   })
 }
 
@@ -154,6 +156,7 @@ const handleScroll = () => {
 }
 
 const toLastView = (visitedViews, view) => {
+  console.log(visitedViews);
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
     router.push(latestView.fullPath)
@@ -165,6 +168,10 @@ const toLastView = (visitedViews, view) => {
     }
   }
 }
+
+watch(tagsViewStore.visitedViews,()=>{
+  console.log(tagsViewStore.visitedViews);
+})
 </script>
 
 <template>
@@ -175,7 +182,7 @@ const toLastView = (visitedViews, view) => {
       @scroll="handleScroll"
     >
       <router-link
-        v-for="tag in visitedViews"
+        v-for="tag in tagsViewStore.visitedViews"
         ref="tag"
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"

@@ -1,9 +1,13 @@
-import Vue from 'vue'
-import SvgIcon from '@/components/SvgIcon'// svg component
+import SvgIcon from '@/components/SvgIcon' // svg component
 
-// register globally
-Vue.component('svg-icon', SvgIcon)
+const requireAll = function(requireContext) {
+  return requireContext.keys().map(requireContext)
+}
 
-const req = require.context('./svg', false, /\.svg$/)
-const requireAll = requireContext => requireContext.keys().map(requireContext)
+const req = require['context']('./svg', false, /\.svg$/) // 用的是vue-cli-service脚手架，可以使用require
+
 requireAll(req)
+
+export default function(app) {
+  app.component('svg-icon', SvgIcon)
+}

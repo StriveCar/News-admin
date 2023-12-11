@@ -1,14 +1,27 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch,nextTick, reactive, computed } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 import { pathToRegexp } from 'path-to-regexp'
 
-let levelList = ref({})
 const router = useRouter()
 const route = useRoute()
 
+const levelList = computed(()=>{
+  let matched = route.matched.filter((item) => item.meta && item.meta.title)
+
+  const first = matched[0]
+
+  if (!isDashboard(first)) {
+    matched = [{ path: '/dashboard', meta: { title: '首页' } }].concat(matched)
+  }
+
+  return matched.filter(
+    (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
+  )
+})
 const getBreadcrumb = () => {
   let matched = route.matched.filter((item) => item.meta && item.meta.title)
+
   const first = matched[0]
 
   if (!isDashboard(first)) {
@@ -18,6 +31,7 @@ const getBreadcrumb = () => {
   levelList = matched.filter(
     (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
   )
+  console.log(levelList[0].meta.title);
 }
 
 const isDashboard = (route) => {
@@ -43,15 +57,15 @@ const handleLink = (item) => {
   router.push(pathCompile(path))
 }
 
-watch(route, () => {
-  getBreadcrumb()
-})
+// watch(route, () => {
+//   getBreadcrumb()
+// })
 </script>
 
 <template>
   <el-breadcrumb class="app-breadcrumb" separator="/">
     <transition-group name="breadcrumb">
-      <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
+      <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path" :to="{ path: item?.path }">
         <span
           v-if="item.redirect === 'noRedirect' || index == levelList.length - 1"
           class="no-redirect"

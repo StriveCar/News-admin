@@ -1,8 +1,7 @@
-<script>
-import { h } from 'vue'
+<script setup>
+import { computed} from 'vue'
 
-export default {
-  props: {
+  const props=defineProps({
     icon: {
       type: String,
       default: ''
@@ -11,25 +10,21 @@ export default {
       type: String,
       default: ''
     }
-  },
-  render() {
-    const vnodes = []
-    if (this.icon) {
-      if (this.icon.includes('el-icon')) {
-        vnodes.push(h('i', { class: [this.icon, 'sub-el-icon'] }))
-      } else {
-        vnodes.push(h('svg-icon', { 'icon-class': this.icon }))
-      }
+  })
+  const isSvg = computed(()=>{
+    if (props.icon.includes('el-icon')) {
+      return true
+    } else{
+      return false
     }
-
-    if (this.title) {
-      vnodes.push(h('span', { slot: 'title' }, this.title))
-    }
-
-    return h('div', null, vnodes)
-  }
-}
+  })
 </script>
+
+<template>
+  <i v-if="isSvg" :class="[props.icon, 'sub-el-icon']"></i>
+  <svg-icon v-else :icon-class="props.icon"></svg-icon>
+  <span v-if="props.title">{{ props.title }}</span>
+</template>
 
 <style scoped>
 .sub-el-icon {

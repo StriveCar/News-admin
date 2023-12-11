@@ -1,6 +1,7 @@
 <script setup>
 import { useUserStore } from '@/store/user'
-import { ref,computed } from 'vue'
+import { ref} from 'vue'
+import config from "@/common/sys-config";
 
 const userStore = useUserStore()
 const props = defineProps({
@@ -9,9 +10,6 @@ const props = defineProps({
     required: true
   }
 })
-console.log(props.collapse);
-const logo = ref('https://www.mushanyu.xyz/logo.png')
-
 </script>
 
 <template>
@@ -23,17 +21,17 @@ const logo = ref('https://www.mushanyu.xyz/logo.png')
         class="sidebar-logo-link"
         to="/"
       >
-        <img alt="logo" v-if="logo" :src="logo" class="sidebar-logo" />
+        <img alt="logo" v-if="config.logo" :src="config.logo" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">
           <!-- {{ userInfo ? '欢迎您，' + userInfo.name : '请登录' }} -->
-          {{ '欢迎您，请登录' }}
+           欢迎您，请登录
         </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img alt="logo" v-if="logo" :src="logo" class="sidebar-logo" />
+        <img alt="logo" v-if="config.logo" :src="config.logo" class="sidebar-logo" />
         <h1 class="sidebar-title">
           <!-- {{ userInfo ? '欢迎您，' + userInfo.name : '请登录' }} -->
-          {{ '欢迎您，请登录' }}
+          欢迎您，请登录
         </h1>
       </router-link>
     </transition>

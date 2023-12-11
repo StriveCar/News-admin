@@ -6,8 +6,8 @@ export const useAppStore = defineStore('app', () => {
   const { cookies } = useCookies()
 
   const sidebar = reactive({
-    // opened: cookies.get('sidebarStatus') ? !!+cookies.get('sidebarStatus') : true,
-    opened: true,
+    opened: cookies.get('sidebarStatus') ? !!+cookies.get('sidebarStatus') : true,
+    // opened: false,
     withoutAnimation: false,
   })
 
@@ -25,7 +25,7 @@ export const useAppStore = defineStore('app', () => {
   }
 
   const closeSidebar = (withoutAnimation) => {
-    set('sidebarStatus', 0)
+    cookies.set('sidebarStatus', 0)
     sidebar.opened = false
     sidebar.withoutAnimation = withoutAnimation
   }

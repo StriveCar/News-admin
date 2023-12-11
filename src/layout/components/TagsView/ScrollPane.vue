@@ -65,6 +65,8 @@ onBeforeUnmount(() => {
   const scrollWrapper = scrollContainer.value.$el.querySelector('.el-scrollbar__wrap')
   scrollWrapper.removeEventListener('scroll', emitScroll)
 })
+
+defineExpose({moveToTarget})
 </script>
 
 <template>

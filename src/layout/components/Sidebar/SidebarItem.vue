@@ -29,7 +29,7 @@ const props = defineProps({
 const onlyOneChild = ref(null)
 
 onMounted(() => {
-  fixBugIniOS()
+  fixBugIniOS(subMenu.value)
 })
 
 defineExpose({
@@ -73,7 +73,7 @@ const resolvePath = (routePath) => {
 </script>
 
 <template>
-  <div v-if="!item.hidden">
+  <div v-if="!item.hidden" class="sidebar">
     <template
       v-if="
         hasOneShowingChild(item.children, item) &&
@@ -84,7 +84,7 @@ const resolvePath = (routePath) => {
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item
           :index="resolvePath(onlyOneChild.path)"
-          :class="{ 'submenu-title-noDropdown': !isNest }"
+          :class="{ 'submenu-title-noDropdown': !props.isNest }"
         >
           <item
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"

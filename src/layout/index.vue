@@ -1,5 +1,14 @@
 <script setup>
-import { ref, computed, watch, onMounted, reactive } from 'vue'
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  reactive,
+  nextTick,
+  onBeforeMount,
+  onBeforeUnmount
+} from 'vue'
 import { useAppStore } from '@/store/app'
 import { useSettingsStore } from '@/store/settings'
 import { useRouter, useRoute } from 'vue-router'
@@ -14,7 +23,7 @@ import AppMain from './components/AppMain.vue'
 import TagsView from './components/TagsView/index'
 import Settings from './components/Settings/index.vue'
 import RightPanel from '@/components/RightPanel'
-import ResizeHook from './hook/ResizeHandler'
+// import ResizeHook from './hook/ResizeHandler'
 
 import homeSteps from '@/layout/steps/home-steps'
 import roomListStepsAdmin from '@/layout/steps/room-list-steps-admin'
@@ -27,19 +36,18 @@ const route = useRoute()
 const router = useRouter()
 
 const rightPanel = ref(null)
+const WIDTH = 992
 
-const sidebar = computed(() => appStore.sidebar)
-const device = computed(() => appStore.device)
-ResizeHook()
 const showSettings = computed(() => settingsStore.state.showSettings)
 const needTagsView = computed(() => settingsStore.state.tagsView)
 const fixedHeader = computed(() => settingsStore.state.fixedHeader)
 const classObj = computed(() => {
+  console.log(appStore.sidebar.opened);
   return {
-    hideSidebar: !sidebar.opened,
-    openSidebar: sidebar.opened,
-    withoutAnimation: sidebar.withoutAnimation,
-    mobile: device === 'mobile'
+    hideSidebar: !appStore.sidebar.opened,
+    openSidebar: appStore.sidebar.opened,
+    withoutAnimation: appStore.sidebar.withoutAnimation,
+    mobile: appStore.device.value === 'mobile'
   }
 })
 const isSuperAdmin = ref(true)
@@ -68,7 +76,7 @@ const handleShowHelpClick = (toPath) => {
     })
     router.push(toPath)
   }
-  rightPanel.closePanel()
+  rightPanel.value.closePanel()
   // 等待跳转dom刷新完毕
   nextTick(() => {
     // 开始引导操作
@@ -98,12 +106,51 @@ const handleShowHelpClick = (toPath) => {
     }
   })
 }
+
+const isMobile = ref(false)
+
+const isMobileDevice = () => {
+  const rect = document.body.getBoundingClientRect()
+  return rect.width - 1 < WIDTH
+}
+
+const resizeHandler = () => {
+  if (!document.hidden) {
+    isMobile.value = isMobileDevice()
+    appStore.toggleDevice(isMobile.value ? 'mobile' : 'desktop')
+    if (isMobile.value) {
+      appStore.closeSidebar({ withoutAnimation: true })
+    }
+  }
+}
+
+onBeforeMount(() => {
+  window.addEventListener('resize', resizeHandler)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeHandler)
+})
+
+onMounted(() => {
+  isMobile.value = isMobileDevice()
+  if (isMobile.value) {
+    appStore.toggleDevice('mobile')
+    appStore.closeSidebar({ withoutAnimation: true })
+  }
+})
+
+watch(route, () => {
+  if (appStore.device.value === 'mobile' && appStore.sidebar.opened) {
+    appStore.closeSidebar({ withoutAnimation: false })
+  }
+})
 </script>
 
 <template>
   <div :class="classObj" class="app-wrapper">
     <div
-      v-if="device === 'mobile' && sidebar.opened"
+      v-if="appStore.device === 'mobile' && appStore.sidebar.opened"
       class="drawer-bg"
       @click="handleClickOutside"
     />
@@ -124,7 +171,13 @@ const handleShowHelpClick = (toPath) => {
 <style lang="scss" scoped>
 @import '~@/styles/mixin.scss';
 @import '~@/styles/variables.scss';
-
+@import '~@/styles/sidebar.scss';
+.main-container {
+    min-height: 100%;
+    transition: margin-left .28s;
+    margin-left: 210px;
+    
+  }
 .app-wrapper {
   @include clearfix;
   position: relative;

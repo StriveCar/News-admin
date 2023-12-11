@@ -5,15 +5,21 @@ import Layout from '@/layout'
 
 export const constantRoutes = [
   {
-    path: '/',
-    redirect: 'login',
-    hidden: true
-  },
-  {
     path: '/login',
     // component: () => import(/* webpackChunkName: "about" */ '../views/login'),
     component: () => import('@/layout'),
     hidden: true
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [{
+      path: 'dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'dashboard', affix: true, noCache: false }
+    }]
   },
   {
     path: '/news',

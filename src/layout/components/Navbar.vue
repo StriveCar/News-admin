@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { ElMessageBox } from 'element-plus'
+import config from '@/common/sys-config'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -13,7 +14,6 @@ const route = useRoute()
 const router = useRouter()
 
 const userInfo = computed(() => userStore.state.userInfo)
-const sidebar = computed(() => appStore.sidebar)
 
 const toggleSideBar = () => {
   appStore.toggleSidebar()
@@ -41,20 +41,25 @@ const logout = () => {
 <template>
   <div class="navbar">
     <hamburger
-      :is-active="sidebar.opened"
+      :is-active="appStore.sidebar.opened"
       class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
+
     <breadcrumb class="breadcrumb-container" />
+
     <div class="right-menu">
+      <template v-if="appStore.device !== 'mobile'">
+        <div  class="right-menu-item hover-effect">
+          更新<svg-icon icon-class="fullscreen" />
+        </div>
+      </template>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img
-            src="https://www.mushanyu.xyz/header1.gif"
-            class="user-avatar"
-          />
+          <img :src="config.avatar" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
+        <template #dropdown>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/profile/index">
             <el-dropdown-item>个人中心</el-dropdown-item>
@@ -63,6 +68,7 @@ const logout = () => {
             <span style="display: block">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
+      </template>
       </el-dropdown>
     </div>
   </div>
@@ -74,18 +80,18 @@ const logout = () => {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
+    transition: background 0.3s;
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -102,7 +108,6 @@ const logout = () => {
       outline: none;
     }
 
-
     .right-menu-item {
       display: inline-block;
       padding: 0 8px;
@@ -113,19 +118,19 @@ const logout = () => {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
 
     .avatar-container {
-      margin-right: 30px;
 
       .avatar-wrapper {
         margin-top: 5px;
+        width: 70px;
         position: relative;
 
         .user-avatar {
@@ -138,7 +143,7 @@ const logout = () => {
         .el-icon-caret-bottom {
           cursor: pointer;
           position: absolute;
-          right: -20px;
+          right: 10px;
           top: 25px;
           font-size: 12px;
         }
