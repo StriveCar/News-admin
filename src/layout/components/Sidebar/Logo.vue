@@ -1,6 +1,6 @@
 <script setup>
 import { useUserStore } from '@/store/user'
-import { ref} from 'vue'
+import { computed } from 'vue'
 import config from "@/common/sys-config";
 
 const userStore = useUserStore()
@@ -10,6 +10,8 @@ const props = defineProps({
     required: true
   }
 })
+const userInfo = computed(()=> userStore.state.userInfo)
+
 </script>
 
 <template>
@@ -23,15 +25,13 @@ const props = defineProps({
       >
         <img alt="logo" v-if="config.logo" :src="config.logo" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">
-          <!-- {{ userInfo ? '欢迎您，' + userInfo.name : '请登录' }} -->
-           欢迎您，请登录
+          {{ userStore ? '欢迎您，' + userInfo.username : '请登录' }}
         </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img alt="logo" v-if="config.logo" :src="config.logo" class="sidebar-logo" />
         <h1 class="sidebar-title">
-          <!-- {{ userInfo ? '欢迎您，' + userInfo.name : '请登录' }} -->
-          欢迎您，请登录
+          {{ userInfo ? '欢迎您，' + userInfo.username : '请登录' }}
         </h1>
       </router-link>
     </transition>
@@ -67,6 +67,7 @@ const props = defineProps({
       vertical-align: middle;
       margin-right: 12px;
       margin-left: 6px;
+      border-radius: 5px;
     }
 
     & .sidebar-title {

@@ -160,6 +160,7 @@ watch(route, () => {
         <Navbar />
         <TagsView v-if="needTagsView" />
       </div>
+      
       <AppMain />
       <RightPanel ref="rightPanel" v-if="showSettings">
         <Settings @handleShowHelpClick="handleShowHelpClick" />

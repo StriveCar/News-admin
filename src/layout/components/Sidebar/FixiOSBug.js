@@ -9,7 +9,6 @@ export default function () {
         const $subMenu = subMenu
         if ($subMenu) {
             const handleMouseleave = $subMenu.handleMouseleave
-            console.log($subMenu.handleMouseleave);
             $subMenu.handleMouseleave = (e) => {
                 if (device === 'mobile') {
                     return

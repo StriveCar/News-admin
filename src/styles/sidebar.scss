@@ -83,6 +83,13 @@
       color: $subMenuActiveText !important;
     }
 
+    .el-submenu__title{
+      color: $menuText !important;
+    }
+
+    .el-menu-item:not(.is-active){
+      color: $menuText !important;
+    }
     .el-menu-item.submenu-title-noDropdown:not(.is-active){
       color:$menuText
     }
@@ -190,7 +197,9 @@
     }
   }
 }
-
+.main-container{
+  background-color: #F0F0F0;
+}
 // when menu collapsed
 .el-menu--vertical {
   &>.el-menu {
@@ -202,7 +211,9 @@
       margin-left: -2px;
     }
   }
-
+  .el-menu--inline{
+    color: $menuText;
+  }
   .nest-menu .el-submenu>.el-submenu__title,
   .el-menu-item {
     

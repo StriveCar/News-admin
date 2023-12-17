@@ -20,7 +20,7 @@ const fixedHeader = computed({
 const roles = computed(() => userStore.state.roles)
 
 const isSuperAdmin = computed(() => {
-  return roles.value.some((v) => v === 'super-admin')
+  return roles.value == 4
 })
 
 const tagsView = computed({

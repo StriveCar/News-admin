@@ -14,11 +14,13 @@
     "codemirror": "^5.45.0",
     "core-js": "^3.8.3",
     "driver.js": "^0.9.8",
+    "echarts": "^5.4.3",
     "element-plus": "^1.0.2-beta.28",
     "jsonlint": "^1.6.3",
     "normalize.css": "^7.0.0",
+    "nprogress": "^0.2.0",
     "path-browserify": "^1.0.1",
-    "path-to-regexp": "^6.2.1",
+    "path-to-regexp": "^2.4.0",
     "pinia": "^2.1.4",
     "pinia-plugin-persistedstate": "^3.2.0",
     "sass": "^1.69.4",
@@ -28,6 +30,7 @@
     "vue": "^3.3.6",
     "vue-router": "^4.0.3",
     "vue3-cookies": "^1.0.6",
+    "vue3-count-to": "^1.1.2",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

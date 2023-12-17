@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
+import { ElMessage ,ElMessageBox} from 'element-plus'
+import { useUserStore } from '@/store/user'
 import router from '@/router'
 import { getToken } from '@/utils/auth'
 
@@ -11,15 +11,17 @@ const service = axios.create({
   baseURL: constants.baseUrl, // url = base url + request url
   // baseURL: 'https://www.mushanyu.xyz:8500', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 50000 // request timeout
+  timeout: 40000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
+    const userStore = useUserStore()
+    console.log(userStore.state.token);
     // do something before request is sent
-    if (store.getters.token) {
-      config.headers['token'] = getToken()
+    if (userStore.state.token) {
+      config.headers['satoken'] = getToken()
     }
     return config
   },
@@ -37,20 +39,21 @@ service.interceptors.response.use(
     if (response.config.responseType === 'blob') {
       return response
     }
+    console.log(response.data);
     const res = response.data
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
       // 需要动态刷新token
       if (res.code === -2 || res.code === -3 || res.code === -4 || res.code === -5) {
         store.dispatch('user/logout').then(() => {
-          Message({
+          ElMessage({
             message: '您的登录状态过期或者无效，请您重新登录！',
             type: 'error',
             duration: 2500
           })
         })
       } else if (res.code === -1) {
-        MessageBox.confirm('未登录，请先登录！', '提示', {
+        ElMessageBox.confirm('未登录，请先登录！', '提示', {
           confirmButtonText: '登录',
           showCancelButton: false,
           type: 'warning',
@@ -61,7 +64,7 @@ service.interceptors.response.use(
       } else if (res.code === 999) {
 
       } else {
-        Message({
+        ElMessage({
           message: res.message || 'Error',
           type: 'error',
           duration: 2500
@@ -69,12 +72,12 @@ service.interceptors.response.use(
       }
       return Promise.reject(res.message || "Error")
     } else {
-      return res.queryData
+      return res.data
     }
   },
   error => {
     console.log('err' + error) // for debug
-    Message({
+    ElMessage({
       message: error.message,
       type: 'error',
       duration: 5 * 1000

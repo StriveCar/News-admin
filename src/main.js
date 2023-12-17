@@ -14,6 +14,9 @@ import VueCookies from 'vue3-cookies'
 
 import loadSvg from '@/icons'
 
+import Permission from "@/directive/permission";
+import Waves from '@/directive/waves'
+import { parseTime } from "@/utils";
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
@@ -22,7 +25,9 @@ const app = createApp(App).use(createPinia()).use(VueCookies)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
+app.config.globalProperties.$parseTime = parseTime
 loadSvg(app)
-
+// app.use(Permission).use(Waves)
+app.directive("permission", Permission)
+app.directive("waves",Waves)
 app.use(router).use(ElementPlus, { zhCn }).mount('#app')

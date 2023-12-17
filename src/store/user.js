@@ -52,30 +52,34 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const Login = async (userInfo) => {
-    const { tel, pwd } = userInfo
-    try {
+    const { act, pwd } = userInfo
+    return new Promise((resolve, reject) => {
       let userLoginDTO = {
-        tel: tel.trim(),
+        act: act.trim(),
         pwd: pwd
       }
-      const data = await userApi.login(userLoginDTO)
-      if (data !== null) {
-        setToken(data.token)
-        setUserInfo(data.user)
-        setRoles(data.roles)
-      } else {
+      userApi.login(userLoginDTO).then(data => {
+        console.log(data);
+        if (data !== null) {
+          setToken(data.token)
+          setUserInfo(data.user)
+          setRoles(data.user.identification)
+          resolve()
+        } else {
+          ElMessage({
+            message: '账号或密码错误',
+            type: 'error',
+            duration: 2500
+          })
+          reject()
+        }
+      }).catch(error=> {
         ElMessage({
-          message: '账号或密码错误',
+          message: error,
           type: 'error',
-          duration: 2500
         })
-      }
-    } catch (error) {
-      ElMessage({
-        message: error,
-        type: 'error',
       })
-    }
+    })
   }
 
   const UpdateUserInfo = (newUserInfo) => {

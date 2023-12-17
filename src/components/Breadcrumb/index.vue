@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch,nextTick, reactive, computed } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
-import { pathToRegexp } from 'path-to-regexp'
+import pathToRegexp from 'path-to-regexp'
 
 const router = useRouter()
 const route = useRoute()

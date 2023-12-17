@@ -36,44 +36,49 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['pagination'])
+const emit = defineEmits(['pagination', 'update:page', 'update:limit'])
+
 const currentPage = computed({
-  get() {
-    return props.page
-  },
+  get: () => props.page,
   set(val) {
     emit('update:page', val)
   }
 })
+
 const pageSize = computed({
   get() {
     return props.limit
   },
   set(val) {
+    console.log(2)
     emit('update:limit', val)
   }
 })
 
 const handleSizeChange = (val) => {
-  emit('pagination', { page: currentPage, limit: val })
   if (props.autoScroll) {
     scrollTo(0, 800)
   }
+  emit('pagination', { page: currentPage.value, limit: val })
 }
 const handleCurrentChange = (val) => {
-  emit('pagination', { page: val, limit: pageSize })
   if (props.autoScroll) {
     scrollTo(0, 800)
   }
+  emit('pagination', { page: val, limit: pageSize.value })
+}
+
+const kkx = () => {
+  emit('update:page', 2)
 }
 </script>
 
 <template>
-  <div :class="{ 'hidden': hidden }" class="pagination-container">
+  <div :class="{ hidden: hidden }" class="pagination-container">
     <el-pagination
       :background="props.background"
-      :current-page="currentPage"
-      :page-size="pageSize"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
       :layout="props.layout"
       :page-sizes="props.pageSizes"
       :total="props.total"
