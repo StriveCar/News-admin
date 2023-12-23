@@ -113,11 +113,12 @@ const props = defineProps({
   display: flex;
   justify-content: space-evenly;
   .card-panel-col {
+    padding: 8px !important;
     margin-bottom: 16px;
   }
 
   .card-panel {
-    height: 108px;
+    height: 100px;
     cursor: pointer;
     font-size: 12px;
     position: relative;
@@ -177,7 +178,7 @@ const props = defineProps({
     .card-panel-icon-wrapper {
       float: left;
       margin: 14px 0 0 14px;
-      padding: 16px;
+      padding: 10px;
       transition: all 0.38s ease-out;
       border-radius: 6px;
     }
@@ -207,7 +208,7 @@ const props = defineProps({
   }
 }
 
-@media (max-width: 550px) {
+@media (max-width: 600px) {
   .card-panel-description {
     display: none;
   }

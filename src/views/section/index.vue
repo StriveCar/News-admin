@@ -3,11 +3,14 @@ import sectionApi from '@/api/section'
 import Pagination from '@/components/Pagination'
 import config from '@/common/sys-config'
 import { ref, computed } from 'vue'
-import { ElMessage,ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import SectionList from './component/section-list'
 
 const listLoading = ref(false)
 const addsectionDialog = ref(false)
 const sectionList = ref([])
+const currentSectionId = ref(1)
+const sectionNewsDrawer = ref(false)
 let addsection = ref('')
 const total = ref(0)
 const query = ref({
@@ -46,18 +49,23 @@ const handleaddsection = () => {
     })
 }
 
-const handleDelClick = (row,index) => {
-  ElMessageBox.confirm("确认要删除该栏目吗",'提示',
-  {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-  }).then(() => {
-    sectionApi.delSection(row.sectionId).then(()=>{
-      getSectionDataList()
-    })
+const handleDelClick = (row, index) => {
+  ElMessageBox.confirm('确认要删除该栏目吗', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   })
-  .catch(() => {})
+    .then(() => {
+      sectionApi.delSection(row.sectionId).then(() => {
+        getSectionDataList()
+      })
+    })
+    .catch(() => {})
+}
+
+const handleSectionNewsClick = (row, index) => {
+  currentSectionId.value = row.sectionId
+  sectionNewsDrawer.value = true
 }
 
 getSectionDataList()
@@ -150,7 +158,7 @@ getSectionDataList()
         </el-table-column>
         <el-table-column width="300" label="操作" align="center">
           <template #default="{ row, $index }">
-            <el-button v-waves style="margin: 3px" type="primary" size="mini">
+            <el-button @click="handleSectionNewsClick(row,index)" v-waves style="margin: 3px" type="primary" size="mini">
               栏目新闻
             </el-button>
             <el-button
@@ -162,19 +170,22 @@ getSectionDataList()
             >
               修改
             </el-button>
-            <el-tooltip content="删除是指该栏目被删除，且栏目下的新闻将不可查看" 
-            placement="bottom" effect="light">
+            <el-tooltip
+              content="删除是指该栏目被删除，且栏目下的新闻将不可查看"
+              placement="bottom"
+              effect="light"
+            >
               <el-button
                 type="danger"
                 v-permission="4"
                 style="margin: 3px"
                 size="mini"
                 v-waves
-                @click="handleDelClick(row,$index)"
+                @click="handleDelClick(row, $index)"
               >
                 删除
               </el-button>
-          </el-tooltip>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -182,13 +193,22 @@ getSectionDataList()
       <Pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="query.page"
-        :limit.sync="query.size"
+        :page="query.page"
+        :limit="query.size"
         @update:page="query.page = $event"
         @update:limit="query.size = $event"
         @pagination="getSectionDataList"
       />
     </div>
+
+    <el-drawer
+      size="45%"
+      title="该栏目下的新闻"
+      :show-close="false"
+      v-model="sectionNewsDrawer"
+      direction="rtl">
+      <SectionList :sectionId="currentSectionId"/>
+    </el-drawer>
 
     <el-dialog
       @close="addsection = ''"
@@ -209,8 +229,13 @@ getSectionDataList()
         </el-form>
       </div>
       <template #footer>
-        <el-button style="margin-right: 10px" v-waves 
-        @click="addsectionDialog = false;addsection = ''">
+        <el-button
+          style="margin-right: 10px"
+          v-waves
+          @click="
+            addsectionDialog = false;addsection = ''
+          "
+        >
           取消
         </el-button>
         <el-button @click="handleaddsection" v-waves type="primary">

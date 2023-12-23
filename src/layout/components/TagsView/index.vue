@@ -143,7 +143,7 @@ const openMenu = (tag, event) => {
   event.preventDefault()
   selectedTag.value = tag
   top.value = event.clientY
-  left.value = event.clientX
+  left.value = event.clientX - 200
   visible.value = true
 }
 

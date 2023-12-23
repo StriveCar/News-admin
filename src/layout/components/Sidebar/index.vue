@@ -31,11 +31,13 @@ const isCollapse = computed({ get: () => !appStore.sidebar.opened })
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
-        :background-color="variables.menuBg"
+        :bg-color="variables.menuBg"
         :text-color="variables.menuText"
         :unique-opened="false"
         :active-text-color="variables.menuActiveText"
         :collapse-transition="false"
+        @open="handleOpen"
+        @close="handleClose"
         mode="vertical"
       >
         <SidebarItem

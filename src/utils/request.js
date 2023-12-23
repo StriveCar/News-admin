@@ -3,7 +3,6 @@ import { ElMessage ,ElMessageBox} from 'element-plus'
 import { useUserStore } from '@/store/user'
 import router from '@/router'
 import { getToken } from '@/utils/auth'
-
 import constants from "@/common/sys-config";
 
 // create an axios instance
@@ -43,9 +42,10 @@ service.interceptors.response.use(
     const res = response.data
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
+      const userStore = useUserStore()
       // 需要动态刷新token
       if (res.code === -2 || res.code === -3 || res.code === -4 || res.code === -5) {
-        store.dispatch('user/logout').then(() => {
+        userStore.Logout().then(() => {
           ElMessage({
             message: '您的登录状态过期或者无效，请您重新登录！',
             type: 'error',

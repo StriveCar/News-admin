@@ -4,7 +4,9 @@ import Pagination from '@/components/Pagination'
 import config from '@/common/sys-config'
 import { useUserStore } from '@/store/user'
 import { useSettingsStore } from '@/store/settings'
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, toRef } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import PulishList from './component/pulish-list'
 
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -18,7 +20,29 @@ const query = ref({
 const listLoading = ref(false)
 const userList = ref([])
 const total = ref(0)
-const isSuperAdmin = ref(false)
+const currentUser = ref({})
+const identificationId = ref(1)
+const identification = ref(1)
+const changeRoleDialog = ref(false)
+const pulishNewsDrawer = ref(false)
+const currentUserId = ref(1)
+const roleOptions = ref([
+  {
+    roleDes: '普通用户',
+    roleName: 'user',
+    id: 1
+  },
+  {
+    roleDes: '新闻编辑',
+    roleName: 'pulisher',
+    id: 2
+  },
+  {
+    roleDes: '管理员',
+    roleName: 'admin',
+    id: 3
+  }
+])
 
 const role = computed(() => userStore.state.roles)
 const fixedHeader = computed(() => settingsStore.state.fixedHeader)
@@ -37,10 +61,34 @@ const getUserList = () => {
       listLoading.value = false
     })
 }
+
+const updateRole = () => {
+  userApi
+    .changeRole({
+      userId: currentUser.value.userId,
+      identification: identificationId.value
+    })
+    .then(() => {
+      let userIndex = userList.value.findIndex(
+        (value) => value.userId === currentUser.value.userId
+      )
+      userList.value[userIndex].identification = identificationId.value
+      resetUpdateTempData()
+      changeRoleDialog.value = false
+    })
+    .catch(() => {
+      changeRoleDialog.value = false
+    })
+}
+
+const resetUpdateTempData = () => {
+  currentUser.value = {}
+  identificationId.value = 1
+}
+
 getUserList()
 
 const identificationDes = (identification) => {
-  console.log(identification);
   switch (identification) {
     case 1:
       return '普通用户'
@@ -52,6 +100,74 @@ const identificationDes = (identification) => {
       return '超级管理员'
   }
 }
+const handleUpdateRoleClick = (row, index) => {
+  currentUser.value = Object.assign({}, row)
+  identificationId.value = row.identification
+  changeRoleDialog.value = true
+}
+const handleUpdateUserNameClick = (row) => {
+  if (role.value != 4) {
+    return ElMessage.error('您的权限不足，该修改操作需要超级管理员权限')
+  }
+  ElMessageBox.prompt('请输入要更改的新用户昵称', '更改用户昵称', {
+    confirmButtonText: '更改',
+    cancelButtonText: '取消',
+    inputValidator: (val) => {
+      if (val === null || val.trim() === '') {
+        return '请输入昵称'
+      } else if (val.trim().length < 2 || val.trim().length > 8) {
+        return '昵称的长度必须在3~16之间'
+      }
+    }
+  })
+    .then(({ value }) => {
+      ElMessage.info('正在完成操作，请稍等')
+      let obj = {
+        userId: row.id,
+        name: value.trim()
+      }
+      userApi.updateUserName(obj).then(() => {
+        row.name = value.trim()
+        ElMessage.success('修改成功')
+      })
+    })
+    .catch(() => {})
+}
+
+const handleUpdateAccountClick = (row) => {
+  if (role.value != 4) {
+    return ElMessage.error('您的权限不足，该修改操作需要超级管理员权限')
+  }
+  ElMessageBox.prompt('请输入要更改的新用户手机号', '更改用户手机号', {
+    confirmButtonText: '更改',
+    cancelButtonText: '取消',
+    inputValidator: (val) => {
+      if (val === null || val.trim() === '') {
+        return '请输入手机号'
+      } else if (val.trim().length != 11) {
+        return '手机号长度必须为11位'
+      }
+    }
+  })
+    .then(({ value }) => {
+      ElMessage.info('正在完成操作，请稍等')
+      let obj = {
+        userId: row.id,
+        name: value.trim()
+      }
+      userApi.updateUserName(obj).then(() => {
+        row.name = value.trim()
+        ElMessage.success('修改成功')
+      })
+    })
+    .catch(() => {})
+}
+const handlePulisherNewsClick = (row, index) => {
+  console.log(row.userId);
+  currentUserId.value = row.userId
+  pulishNewsDrawer.value = true
+}
+
 </script>
 
 <template>
@@ -69,10 +185,10 @@ const identificationDes = (identification) => {
         placeholder="请选择身份"
       >
         <el-option
-          v-for="(item, index) in institute"
-          :label="item"
+          v-for="(item, index) in roleOptions"
+          :label="item.roleDes"
           :key="index"
-          :value="item"
+          :value="item.id"
         ></el-option>
       </el-select>
       <el-input
@@ -134,19 +250,21 @@ const identificationDes = (identification) => {
         ></el-table-column>
         <el-table-column label="用户名" align="center">
           <template #default="{ row }">
-            <span>{{ row.username }}</span>
+            <span @click="handleUpdateUserNameClick(row)" class="link-type">
+              {{ row.username }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="账号" align="center">
           <template #default="{ row }">
-            <span @click="handleUpdateUserNameClick(row)" class="link-type">
+            <span >
               {{ row.account }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="联系电话" align="center">
           <template #default="{ row }">
-            <span>{{ row.phoneNumber }}</span>
+            <span @click="handleUpdateAccountClick(row)" class="link-type">{{ row.phoneNumber }}</span>
           </template>
         </el-table-column>
         <el-table-column label="注册日期" align="center">
@@ -154,7 +272,7 @@ const identificationDes = (identification) => {
             <span>{{ $parseTime(row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="身份" width="200" align="center">
+        <el-table-column label="身份" align="center">
           <template #default="{ row }">
             <span v-if="row.identification == 0">未赋予角色</span>
             <el-tag v-else style="margin: 3px" type="primary">
@@ -162,15 +280,19 @@ const identificationDes = (identification) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column width="300" label="操作" align="center">
+        <el-table-column width="400" label="操作" align="center">
           <template #default="{ row, $index }">
-            <el-button style="margin: 3px" type="primary" size="mini">
-              收藏详情
-            </el-button>
-            <el-button style="margin: 3px" type="primary" size="mini">
+            <el-button
+              v-if="row.identification != 1"
+              @click="handlePulisherNewsClick(row, $index)"
+              style="margin: 3px"
+              type="primary"
+              size="mini"
+            >
               发布详情
             </el-button>
             <el-button
+              @click="handleUpdateRoleClick(row, $index)"
               plain
               type="primary"
               v-waves
@@ -179,6 +301,12 @@ const identificationDes = (identification) => {
             >
               身份修改
             </el-button>
+            <el-button style="margin: 3px" type="primary" size="mini">
+              收藏详情
+            </el-button>
+            <el-button style="margin: 3px" type="danger" size="mini">
+              重置密码
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -186,13 +314,56 @@ const identificationDes = (identification) => {
       <Pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="query.page"
-        :limit.sync="query.size"
-        @update:page="query.page=$event"
-        @update:limit="query.size=$event"
+        :page="query.page"
+        :limit="query.size"
+        @update:page="query.page = $event"
+        @update:limit="query.size = $event"
         @pagination="getUserList"
       />
     </div>
+
+    <el-drawer
+      size="45%"
+      title="该作者新闻发布详情"
+      :show-close="false"
+      v-model="pulishNewsDrawer"
+      direction="rtl">
+      <PulishList :pulisherId="currentUserId"/>
+    </el-drawer>
+
+    <el-dialog
+      @close="resetUpdateTempData"
+      :close-on-click-modal="false"
+      :center="true"
+      v-model="changeRoleDialog"
+      width="30%"
+      title="修改身份"
+    >
+      <div style="text-align: center">
+        <el-radio-group v-model="identificationId">
+          <el-radio
+            :disabled="item.id == currentUser.identification"
+            v-for="(item, index) in roleOptions"
+            :label="item.id"
+            :key="index"
+          >
+            {{ item.roleDes }}
+          </el-radio>
+        </el-radio-group>
+      </div>
+      <template #footer>
+        <el-button
+          style="margin-right: 10px"
+          v-waves
+          @click="changeRoleDialog = false"
+        >
+          取消
+        </el-button>
+        <el-button @click="updateRole" v-waves type="primary">确认</el-button>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 

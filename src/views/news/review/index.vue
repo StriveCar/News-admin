@@ -2,27 +2,29 @@
 import newsApi from '@/api/news'
 import sectionApi from '@/api/section'
 import Pagination from '@/components/Pagination'
-import config from '@/common/sys-config'
 import { ref, computed, watch } from 'vue'
 import { useSettingsStore } from '@/store/settings'
+import ReviewTable from './component/review-table'
 
 const settingsStore = useSettingsStore()
 
 const listLoading = ref(false)
 const newsDialog = ref(false)
-const newsList = ref([])
+const notPulishList = ref([])
+const pulishList = ref([])
+const cancelPulishList = ref([])
+const delNowsList = ref([])
 const sectionList = ref([])
 const currentNews = ref({})
 const total = ref(0)
 const query = ref({
-  page:1,
-  size:10,
+  page: 1,
+  size: 10,
   content: '',
   title: '',
-  status: 3,
+  status: '1',
   sectionId: ''
 })
-const page = ref(1)
 
 const fixedHeader = computed(() => settingsStore.state.fixedHeader)
 
@@ -32,7 +34,7 @@ const getNewsList = () => {
   newsApi
     .newsList(query.value)
     .then((data) => {
-      newsList.value = data.pageData
+      setNewsList(data.pageData)
       total.value = data.totalSize
       listLoading.value = false
     })
@@ -51,6 +53,45 @@ const getSectionList = () => {
       console.log(e.message)
     })
 }
+
+const setNewsList = (data) => {
+  switch (query.value.status) {
+    case '1':
+      notPulishList.value = data
+      break
+    case '2':
+      pulishList.value = data
+      break
+    case '3':
+      cancelPulishList.value = data
+      break
+    case '4':
+      delNowsList.value = data
+      break
+  }
+}
+const pulishNews = (row, index) => {
+  newsApi
+    .pulishNews(row.newsId)
+    .then((data) => {
+      getNewsList()
+    })
+    .catch((e) => {
+      console.log(e.message)
+    })
+}
+
+const delNews = (row, index) => {
+  newsApi
+    .delNews(row.newsId)
+    .then((data) => {
+      getNewsList()
+    })
+    .catch((e) => {
+      console.log(e.message)
+    })
+}
+
 getSectionList()
 getNewsList()
 
@@ -58,7 +99,10 @@ const handleNewsClick = (row, index) => {
   currentNews.value = row
   newsDialog.value = true
 }
-
+const resetNewsTempData = ()=>{
+  currentNews.value = {}
+  newsDialog.value = false
+}
 </script>
 
 <template>
@@ -111,109 +155,68 @@ const handleNewsClick = (row, index) => {
       </el-button>
     </div>
     <div>
-      <el-table
-        key="1"
-        v-loading="listLoading"
-        :data="newsList"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-      >
-        <el-table-column
-          label="序号"
-          align="center"
-          type="index"
-          width="80"
-        ></el-table-column>
-        <el-table-column
-          label="新闻标题"
-          align="center"
-          :show-overflow-tooltip="true"
-        >
-          <template #default="{ row }">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="新闻内容"
-          align="center"
-          :show-overflow-tooltip="true"
-        >
-          <template #default="{ row }">
-            <span>{{ row.content }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="作者" align="center">
-          <template #default="{ row }">
-            <span>
-              {{ row.publisherName }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="栏目" align="center">
-          <template #default="{ row }">
-            <span>{{ row.sectionName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" align="center">
-          <template #default="{ row }">
-            <span>{{ $parseTime(row.publishTime) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column width="300" label="操作" align="center">
-          <template #default="{ row, $index }">
-            <el-button
-              @click="handleNewsClick(row, $index)"
-              style="margin: 3px"
-              v-waves
-              type="primary"
-              size="mini"
-            >
-              新闻详情
-            </el-button>
-            <el-button style="margin: 3px" type="primary" size="mini">
-              发布
-            </el-button>
-            <el-button plain style="margin: 3px" type="primary" size="mini">
-              修改
-            </el-button>
-            <el-button
-              type="danger"
-              v-permission="4"
-              v-waves
-              style="margin: 3px"
-              size="mini"
-            >
-              禁用
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-tabs v-model="query.status" @tab-click="getNewsList">
+        <el-tab-pane name="1" label="未发布">
+          <ReviewTable
+            :newsList="notPulishList"
+            :listLoading="listLoading"
+            @handleNewsClick="handleNewsClick"
+          />
+        </el-tab-pane>
+        <el-tab-pane name="2" label="已发布">
+          <ReviewTable
+            :newsList="pulishList"
+            :listLoading="listLoading"
+            @handleNewsClick="handleNewsClick"
+          />
+        </el-tab-pane>
+        <el-tab-pane name="3" label="取消发布">
+          <ReviewTable
+            :newsList="cancelPulishList"
+            :listLoading="listLoading"
+            @handleNewsClick="handleNewsClick"
+          />
+        </el-tab-pane>
+        <el-tab-pane name="4" label="已禁用">
+          <ReviewTable
+            :newsList="delNowsList"
+            :listLoading="listLoading"
+            @handleNewsClick="handleNewsClick"
+          />
+        </el-tab-pane>
+      </el-tabs>
 
       <Pagination
         v-show="total > 0"
         :total="total"
         :page="query.page"
         :limit="query.size"
-        @update:page="query.page=$event"
-        @update:limit="query.size=$event"
+        @update:page="query.page = $event"
+        @update:limit="query.size = $event"
         @pagination="getNewsList"
       />
     </div>
 
     <el-dialog
-      @close=""
-      :close-on-click-modal="false"
       v-model="newsDialog"
       title="新闻详情"
+      append-to-body
+      @close="resetNewsTempData"
+      :close-on-click-modal="false"
     >
       <div style="text-align: center">
         <h2>{{ currentNews.title }}</h2>
       </div>
-      <div v-html="currentNews.content">
-
+      <br>
+      <div>
+        <span class="name">作者：</span>
+        <span >{{ currentNews.publisherName }}</span>
+        &nbsp; &nbsp; &nbsp; &nbsp;
+        <span class="name">栏目：</span> 
+        <span>{{ currentNews.sectionName }}</span>
       </div>
+      <br>
+      <div v-html="currentNews.content"></div>
       <template #footer>
         <el-button
           style="margin-right: 10px"
@@ -228,4 +231,8 @@ const handleNewsClick = (row, index) => {
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.name {
+  font-weight: bold;
+}
+</style>
